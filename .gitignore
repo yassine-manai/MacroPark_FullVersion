@@ -1,0 +1,9 @@
+**/*.pyc
+.vscode
+venv
+nenv
+logs/*
+mosquitto
+__pycache__
+**/__pycache__
+.env

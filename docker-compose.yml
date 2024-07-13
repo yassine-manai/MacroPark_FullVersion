@@ -1,0 +1,72 @@
+version: '3'
+services:
+  core_server:
+    build: ./CoreServer
+    ports:
+      - "8280:8280"
+    environment:
+      - APP_IP=192.168.25.59
+      - APP_PORT=8280
+      - MQTT_SERVER=192.168.25.59
+      - MQTT_PORT=1883
+      - MQTT_TOPIC_PUB=LPR/Entry_Pub
+      - MQTT_TOPIC_SUB=LPR/Entry_Sub
+      - MQTT_TOPIC_OPEN=WT32/access
+      - MQTT_TOPIC_UID=WT32/auth
+      - VERIF_URL=/lpns/Parking/verifier_lpn
+      - VERIF_URL_ESP=/users/Parking/ESPuser
+      - Log_Url=/reports/Parking/UploadAction
+    networks:
+      - mqtt_net
+
+  lpr_server:
+    image: yassinemanai/mp_lpr:2.0
+    ports:
+      - "8180:8180"
+    environment:
+      - APP_IP=192.168.25.59
+      - APP_PORT=8180
+      - Cam_username=admin
+      - Cam_password=quercus2
+      - Cam_id=Entry01
+      - MQTT_SERVER=192.168.25.59
+      - MQTT_PORT=1883
+      - MQTT_TOPIC_PUB=LPR/Entry_Pub
+    networks:
+      - mqtt_net
+
+  backend_server:
+    build: ./ParkingAdmin
+    ports:
+      - "8200:8200"
+    networks:
+      - mqtt_net
+
+  mqtt5:
+    image: eclipse-mosquitto
+    container_name: mqtt5
+    restart: always
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:rw
+      - ./data/mosquitto/data:/mosquitto/data:rw
+      - ./data/mosquitto/log:/mosquitto/log:rw
+    networks:
+      - mqtt_net
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongo:/data/db:rw
+    networks:
+      - mqtt_net
+
+networks:
+  mqtt_net:
+    driver: bridge

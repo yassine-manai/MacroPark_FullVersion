@@ -1,0 +1,10 @@
+# Ignore generated files
+**/*.pyc
+.vscode
+venv
+venv2
+nenv
+logs/*
+__pycache__
+**/__pycache__
+.env

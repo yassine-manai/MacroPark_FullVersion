@@ -1,0 +1,36 @@
+version: '3'
+services:
+  service1:
+    image: yassinemanai/mp_core:1.0
+    ports:
+      - "5001:5001"
+
+  service2:
+    image: your_dockerhub_username/service2:latest
+    ports:
+      - "5002:5002"
+
+  service3:
+    image: your_dockerhub_username/service3:latest
+    ports:
+      - "5003:5003"
+
+
+
+docker-compose up pour run servers 
+
+
+
+
+
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto:/etc/mosquitto
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf 
